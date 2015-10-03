@@ -1,0 +1,45 @@
+
+independent
+
+	token themselves (DONE)
+	POS (DONE)
+	binary feature indicating if the two events have the same POS tag (DONE)
+	lemma
+
+pairwise
+
+	sentence distance (difference of the sentence number)
+	event distance (difference of the event IDs, if they are adjacent the distance is 0)  (DONE)
+
+
+	Event attributes
+		class  (DONE)
+		tense  (DONE)
+		aspect (DONE)
+		polarity(DONE)
+
+		(events that are noun, adjectives or propositions dont have aspect and tense, for these you need to look at verbs that govern them using dependency relation and use their aspect and tense)
+
+		four binary features representing whether e1 adn e2 have same event attributes or not  (DONE)
+
+		These features (the binary ones) and tense and aspect are very important for the detection of the causal relation
+
+	Dependency information 
+
+		dependency path between e1 and e2
+		the type of causative verb connecting them if any 
+		binary features indicating whether e1 or e2 are root of the sentence
+
+		Information is based on collapsed representation of dependency relations provided by StanfordCoreNLP
+
+	Causal Signals 
+
+		Causal signals between e1 and e2 or before e1. 
+
+		Position of the signal: between or before 
+
+		In case of multiple signals between e1 and e2, take the one closest to e2
+
+	Temporal relations 
+
+		the temporal relation type connecting e1 and e2 if any
