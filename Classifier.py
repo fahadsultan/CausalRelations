@@ -10,6 +10,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction import DictVectorizer
 from sklearn.naive_bayes import GaussianNB
 from sklearn.lda import LDA
 from sklearn.qda import QDA
@@ -18,6 +19,9 @@ from scipy.sparse import vstack
 from sklearn import cross_validation
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
+import json
+
+
 
 import pandas as pd
 
@@ -26,6 +30,12 @@ class Classifier:
     def __init__(self):
 
         self.features_df = None
+
+        self.data = pd.read_csv('features.csv', header=0, index_col=0)
+
+        self.y = self.data['causal_relation_exists']
+
+        del self.data['causal_relation_exists']
 
     def get_dep_features(self):
         dep_features = self.encode_dependency_path(self.data[22])
@@ -47,12 +57,6 @@ class Classifier:
         return dep_features
 
     def encode_features(self):
-
-        data = pd.read_csv('features.csv', header=0, index_col=0)
-
-        self.y = data['causal_relation_exists']
-
-        del data['causal_relation_exists']
 
         encoders = {
             # 'e1_token_id', 
@@ -100,7 +104,7 @@ class Classifier:
 
             # print feature
 
-            transformed = data[feature].fillna('')
+            transformed = self.data[feature].fillna('')
 
             for encoder in feature_encoders:
 
@@ -126,6 +130,14 @@ class Classifier:
         #     le = LabelEncoder().fit(df[col])
         #     df[col] = le.transform(df[col])
         #     encoders[col] = le
+
+    def encode_features_using_dict_vectorizer(self):
+
+        self.data = self.data.fillna('')
+        json_content = self.data.to_json(orient='records')
+        data = json.loads(json_content)
+        vec = DictVectorizer()
+        self.features_df = vec.fit_transform(data)
 
     def classify(self):
 
@@ -188,5 +200,6 @@ class Classifier:
 
 if __name__ == "__main__":
     clf = Classifier()
-    clf.encode_features()
+    clf.encode_features_using_dict_vectorizer()
+    # clf.encode_features()
     clf.classify()
